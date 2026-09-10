@@ -1,0 +1,16 @@
+# Core web app
+fastapi
+uvicorn
+pydantic
+
+# RAG / embeddings
+sentence-transformers
+faiss-cpu
+transformers
+pypdf
+
+# Required by sentence-transformers / transformers
+torch
+
+# Optional but commonly used with Hugging Face model downloads
+huggingface_hub
