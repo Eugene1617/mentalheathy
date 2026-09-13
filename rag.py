@@ -16,7 +16,7 @@ CHROMA_DIR = "./chroma_db"
 COLLECTION_NAME = "mental_health"
 
 # Override with an env var if you switch to a different hosted model.
-GEN_MODEL_NAME = os.environ.get("MINDPOWER_GEN_MODEL", "Qwen/Qwen2.5-0.5B-Instruct")
+GEN_MODEL_NAME = os.environ.get("MINDPOWER_GEN_MODEL", "google/gemma-2-2b-it")
 HF_TOKEN = os.environ.get("HF_TOKEN")
 
 SYSTEM_PROMPT = """You are a mental health support assistant.
