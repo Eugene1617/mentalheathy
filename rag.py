@@ -29,7 +29,7 @@ from huggingface_hub.utils import HfHubHTTPError
 
 logger = logging.getLogger("mindpower.rag")
 
-CHROMA_DIR = "chroma_db"
+CHROMA_DIR = "chromadb"
 COLLECTION_NAME = "mental_health"
 
 # Override with an env var if you switch to a different hosted model.
@@ -56,10 +56,25 @@ def get_collection():
     """Open the pre-built Chroma store (see build_index.py)."""
     embed_fn = embedding_functions.DefaultEmbeddingFunction()
     client = chromadb.PersistentClient(path=CHROMA_DIR)
-    return client.get_or_create_collection(
+    collection = client.get_or_create_collection(
         name=COLLECTION_NAME,
         embedding_function=embed_fn,
     )
+
+    count = collection.count()
+    if count == 0:
+        logger.warning(
+            "Chroma collection '%s' at %s is EMPTY. Every question will "
+            "return the 'not enough information' fallback until this is "
+            "fixed. Make sure build_index.py was run and that the "
+            "chroma_db/ folder was actually deployed alongside app.py.",
+            COLLECTION_NAME,
+            CHROMA_DIR,
+        )
+    else:
+        logger.info("Loaded Chroma collection '%s' with %d chunks.", COLLECTION_NAME, count)
+
+    return collection
 
 
 def get_generator_client() -> InferenceClient:
