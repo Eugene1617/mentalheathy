@@ -29,7 +29,7 @@ from huggingface_hub.utils import HfHubHTTPError
 
 logger = logging.getLogger("mindpower.rag")
 
-CHROMA_DIR = "./chroma_db"
+CHROMA_DIR = "chroma_db"
 COLLECTION_NAME = "mental_health"
 
 # Override with an env var if you switch to a different hosted model.
