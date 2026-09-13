@@ -62,9 +62,13 @@ def ask(request: AskRequest):
         raise HTTPException(status_code=400, detail="Question cannot be empty.")
 
     try:
+        # answer_question() already falls back to an extractive,
+        # retrieval-grounded answer if the generation model fails —
+        # this except only fires for retrieval/infrastructure errors
+        # (e.g. the Chroma store itself being unreachable).
         answer = answer_question(question, state["collection"], state["client"])
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Generation failed: {exc}") from exc
+        raise HTTPException(status_code=500, detail=f"Retrieval failed: {exc}") from exc
 
     return AskResponse(answer=answer)
 
