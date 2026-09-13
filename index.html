@@ -396,11 +396,13 @@
     if (row) row.remove();
   }
 
+  const API_BASE = 'https://mentalheathy.onrender.com';
+
   // Calls the FastAPI backend's /api/ask endpoint (see app.py). Falls
-  // back to a canned reply if the backend isn't running.
+  // back to a canned reply if the backend isn't reachable.
   async function getReply(question) {
     try {
-      const res = await fetch('/api/ask', {
+      const res = await fetch(`${API_BASE}/api/ask`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question })
