@@ -107,7 +107,7 @@ def build_fallback_answer(context_chunks: list[str]) -> str:
         excerpt = excerpt[:700].rsplit(" ", 1)[0] + "…"
 
     return (
-    '<span style="color: red;">information from the book only</span> '
+    
     f"\"{excerpt}\"\n\n"
    
 )
