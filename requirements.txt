@@ -3,3 +3,4 @@ uvicorn[standard]
 chromadb
 huggingface_hub
 pydantic
+pymupdf
