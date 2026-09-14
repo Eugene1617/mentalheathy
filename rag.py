@@ -29,8 +29,8 @@ from huggingface_hub.utils import HfHubHTTPError
 
 logger = logging.getLogger("mindpower.rag")
 
-CHROMA_DIR = "chroma"
-COLLECTION_NAME = "mental_health"
+CHROMA_DIR = "chromadb"
+COLLECTION_NAME = "mentalhealth"
 
 # Override with an env var if you switch to a different hosted model.
 GEN_MODEL_NAME = os.environ.get("MINDPOWER_GEN_MODEL", "Qwen/Qwen2.5-0.5B-Instruct")
