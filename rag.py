@@ -107,11 +107,10 @@ def build_fallback_answer(context_chunks: list[str]) -> str:
         excerpt = excerpt[:700].rsplit(" ", 1)[0] + "…"
 
     return (
-        "I'm having trouble reaching the assistant model right now, but "
-        "here's a relevant excerpt from the knowledge base that may help:\n\n"
-        f"\"{excerpt}\"\n\n"
-        "Please try again shortly for a more tailored response."
-    )
+    '<span style="color: red;">information from the book only</span> '
+    f"\"{excerpt}\"\n\n"
+   
+)
 
 
 def answer_question(
