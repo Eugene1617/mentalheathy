@@ -50,7 +50,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_methods=["POST", "GET"],
-    allow_headers=["*"],
+    allow_headers=["https://mentalheathy.onrender.com"],
 )
 
 
