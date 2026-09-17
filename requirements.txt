@@ -1,6 +1,6 @@
 fastapi
 uvicorn[standard]
 chromadb
-huggingface_hub
+google-genai
 pydantic
 pymupdf
