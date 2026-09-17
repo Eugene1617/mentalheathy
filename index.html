@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel='iconp href=https://www.bing.com/th/id/OIP.0_QLfw0GGv9tbKFrJa1K-QHaH6?w=193&h=207&c=8&rs=1&qlt=90&o=6&pid=ImgAns&rm=2'>
 <style>
   :root{
     --forest: #1B3A2B;
@@ -396,11 +397,13 @@
     if (row) row.remove();
   }
 
+  const API_BASE = 'https://mentalheathy.onrender.com';
+
   // Calls the FastAPI backend's /api/ask endpoint (see app.py). Falls
-  // back to a canned reply if the backend isn't running.
+  // back to a canned reply if the backend isn't reachable.
   async function getReply(question) {
     try {
-      const res = await fetch('/api/ask', {
+      const res = await fetch(`${API_BASE}/api/ask`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question })
