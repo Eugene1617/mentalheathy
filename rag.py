@@ -28,7 +28,7 @@ COLLECTION_NAME = "mentalhealth"
 # Note: there is no "Gemini 3.5" model — the line runs 1.0 / 1.5 / 2.0 / 2.5.
 # gemini-2.5-flash is a solid default: fast and inexpensive for grounded Q&A.
 GEN_MODEL_NAME = os.environ.get("MINDPOWER_GEN_MODEL", "gemini-2.5-flash")
-GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
+GOOGLE_API_KEY = os.environ.get("GOOGLE_GEMIN_TOKEN")
 
 SYSTEM_PROMPT = """You are a mental health support assistant.
 Answer using the provided knowledge only.
@@ -37,7 +37,7 @@ If the provided knowledge does not contain enough information,
 say that you do not have enough information.
 If the user's message suggests they may be in crisis or at risk of harming
 themselves, gently encourage them to contact a crisis line or emergency
-services in their area in addition to anything else you say."""
+services in their area in addition to anything else you say. and avoid puting * in the sentence use dots instead"""
 
 NO_RESULTS_MESSAGE = (
     "I don't have enough information in my knowledge base to answer that "
