@@ -7,20 +7,20 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel='iconp href=https://www.bing.com/th/id/OIP.0_QLfw0GGv9tbKFrJa1K-QHaH6?w=193&h=207&c=8&rs=1&qlt=90&o=6&pid=ImgAns&rm=2'>
+<link rel="icon" href="https://www.bing.com/th/id/OIP.0_QLfw0GGv9tbKFrJa1K-QHaH6?w=193&h=207&c=8&rs=1&qlt=90&o=6&pid=ImgAns&rm=2">
 <style>
   :root{
-    --forest: #1B3A2B;
-    --forest-ink: #16301F;
+    --dusk: #3E3A63;
+    --dusk-ink: #2E2B4C;
     --parchment: #F6F1E7;
     --surface: #FFFDF8;
-    --gold: #C9962E;
-    --gold-deep: #A87C22;
-    --sage: #7FA687;
-    --sage-deep: #5F8A69;
+    --coral: #E0805A;
+    --coral-deep: #C4653F;
+    --periwinkle: #8D95C4;
+    --periwinkle-deep: #6E77A8;
     --ink: #26261F;
     --ink-soft: #5B5A50;
-    --line: rgba(27,58,43,0.14);
+    --line: rgba(62,58,99,0.16);
     --radius-lg: 22px;
     --radius-sm: 10px;
     font-size: 16px;
@@ -49,7 +49,7 @@
     justify-content: space-between;
     gap: 24px;
     padding: 18px clamp(16px, 4vw, 40px);
-    background: var(--forest);
+    background: var(--dusk);
     color: var(--parchment);
     flex-wrap: wrap;
   }
@@ -92,7 +92,7 @@
     font-style: italic;
     font-weight: 400;
     font-size: 1rem;
-    color: #D8CBA6;
+    color: #D9CFEA;
     text-align: right;
     max-width: 260px;
   }
@@ -116,7 +116,7 @@
     border: 1px solid var(--line);
     border-radius: var(--radius-lg);
     overflow: hidden;
-    box-shadow: 0 1px 0 rgba(27,58,43,0.05);
+    box-shadow: 0 1px 0 rgba(62,58,99,0.05);
   }
 
   .transcript{
@@ -152,8 +152,8 @@
   }
 
   .bubble.user{
-    background: var(--sage);
-    color: #12251A;
+    background: var(--periwinkle);
+    color: #1E1E38;
     border-radius: 18px 18px 4px 18px;
   }
 
@@ -166,7 +166,7 @@
     margin-bottom: 3px;
   }
 
-  .bubble.user .label{ color: #1E3826; text-align: right; }
+  .bubble.user .label{ color: #24244A; text-align: right; }
 
   .typing{
     display: inline-flex;
@@ -202,7 +202,7 @@
   .chip{
     border: 1px solid var(--line);
     background: var(--surface);
-    color: var(--forest-ink);
+    color: var(--dusk-ink);
     font-family: 'Inter', sans-serif;
     font-size: 0.86rem;
     padding: 7px 14px;
@@ -213,7 +213,7 @@
 
   .chip:hover, .chip:focus-visible{
     background: var(--parchment);
-    border-color: var(--gold);
+    border-color: var(--coral);
   }
 
   /* ---------- Input row ---------- */
@@ -241,14 +241,14 @@
   }
 
   #message-input:focus-visible{
-    outline: 2px solid var(--gold);
+    outline: 2px solid var(--coral);
     outline-offset: 1px;
   }
 
   #send-btn{
     flex-shrink: 0;
     border: none;
-    background: var(--forest);
+    background: var(--dusk);
     color: var(--parchment);
     font-family: 'Inter', sans-serif;
     font-weight: 600;
@@ -259,10 +259,10 @@
     transition: background 0.15s ease;
   }
 
-  #send-btn:hover{ background: var(--forest-ink); }
+  #send-btn:hover{ background: var(--dusk-ink); }
 
   #send-btn:focus-visible{
-    outline: 2px solid var(--gold);
+    outline: 2px solid var(--coral);
     outline-offset: 2px;
   }
 
@@ -271,18 +271,69 @@
     cursor: not-allowed;
   }
 
-  /* ---------- Footer note ---------- */
+  /* ---------- Footer: safety note + feedback ---------- */
   .safety-note{
     text-align: center;
     font-size: 0.82rem;
     color: var(--ink-soft);
-    padding: 12px 20px 20px;
+    padding: 12px 20px 4px;
     max-width: 640px;
     margin: 0 auto;
     line-height: 1.5;
   }
 
-  .safety-note strong{ color: var(--forest-ink); }
+  .safety-note strong{ color: var(--dusk-ink); }
+
+  .helplines{
+    max-width: 640px;
+    margin: 10px auto 0;
+    padding: 0 20px;
+  }
+
+  .helplines ul{
+    list-style: none;
+    margin: 6px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px 16px;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+  }
+
+  .helplines a{
+    color: var(--coral-deep);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .helplines a:hover,
+  .helplines a:focus-visible{ text-decoration: underline; }
+
+  footer.site-footer{
+    text-align: center;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    padding: 18px 20px 28px;
+  }
+
+  footer.site-footer .feedback-links{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 18px;
+    margin-top: 6px;
+  }
+
+  footer.site-footer a{
+    color: var(--dusk-ink);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  footer.site-footer a:hover,
+  footer.site-footer a:focus-visible{ text-decoration: underline; }
 
   @media (max-width: 560px){
     .motto{ text-align: left; max-width: none; font-size: 0.9rem; }
@@ -296,7 +347,7 @@
 <header>
   <div class="brand">
     <svg class="mark" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <path d="M24 44C24 44 12 36 12 22C12 12 24 4 24 4C24 4 36 12 36 22C36 36 24 44 24 44Z" fill="#7FA687" stroke="#F6F1E7" stroke-width="1.5"/>
+      <path d="M24 44C24 44 12 36 12 22C12 12 24 4 24 4C24 4 36 12 36 22C36 36 24 44 24 44Z" fill="#8D95C4" stroke="#F6F1E7" stroke-width="1.5"/>
       <path d="M24 44V16" stroke="#F6F1E7" stroke-width="2" stroke-linecap="round"/>
     </svg>
     <span class="wordmark">MindPower</span>
@@ -332,9 +383,24 @@
 
 <p class="safety-note">
   MindPower shares supportive information and is not a diagnosis or a replacement for professional care.
-  <strong>If you're in immediate danger or crisis</strong>, please contact local emergency services or a crisis
-  helpline in your area right away.
+  <strong>If you're in immediate danger or crisis</strong>, please reach out right away using one of the numbers below.
 </p>
+
+<div class="helplines">
+  <ul>
+    <li>Emergency (Malawi): <a href="tel:990">990</a></li>
+    <li>Youth Helpline (toll-free): <a href="tel:393">393</a></li>
+    <li>GBV Crisis Line (24hr): <a href="tel:5600">5600</a></li>
+  </ul>
+</div>
+
+<footer class="site-footer">
+  <div>Have feedback, found a bug, or want to reach the team?</div>
+  <div class="feedback-links">
+    <a href="https://wa.me/265985522820" target="_blank" rel="noopener">WhatsApp: +265 985 522 820</a>
+    <a href="mailto:kayangeeugene@gmail.com">kayangeeugene@gmail.com</a>
+  </div>
+</footer>
 
 <script>
 (function(){
