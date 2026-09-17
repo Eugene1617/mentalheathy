@@ -16,8 +16,9 @@ import os
 
 import chromadb
 from chromadb.utils import embedding_functions
-import google.generativeai as genai
-from google.api_core.exceptions import GoogleAPIError
+from google import genai
+from google.genai import types as genai_types
+from google.genai.errors import APIError
 
 logger = logging.getLogger("mindpower.rag")
 
@@ -28,7 +29,7 @@ COLLECTION_NAME = "mentalhealth"
 # Note: there is no "Gemini 3.5" model — the line runs 1.0 / 1.5 / 2.0 / 2.5.
 # gemini-2.5-flash is a solid default: fast and inexpensive for grounded Q&A.
 GEN_MODEL_NAME = os.environ.get("MINDPOWER_GEN_MODEL", "gemini-2.5-flash")
-GOOGLE_API_KEY = os.environ.get("GOOGLE_GEMIN_TOKEN")
+GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
 
 SYSTEM_PROMPT = """You are a mental health support assistant.
 Answer using the provided knowledge only.
@@ -37,7 +38,7 @@ If the provided knowledge does not contain enough information,
 say that you do not have enough information.
 If the user's message suggests they may be in crisis or at risk of harming
 themselves, gently encourage them to contact a crisis line or emergency
-services in their area in addition to anything else you say. and avoid puting * in the sentence use dots instead"""
+services in their area in addition to anything else you say."""
 
 NO_RESULTS_MESSAGE = (
     "I don't have enough information in my knowledge base to answer that "
@@ -71,18 +72,14 @@ def get_collection():
     return collection
 
 
-def get_generator_client() -> genai.GenerativeModel:
+def get_generator_client() -> genai.Client:
     if not GOOGLE_API_KEY:
         raise RuntimeError(
             "GOOGLE_API_KEY environment variable is not set. Create a key at "
             "https://aistudio.google.com/app/apikey and set it in your "
             "Render environment variables."
         )
-    genai.configure(api_key=GOOGLE_API_KEY)
-    return genai.GenerativeModel(
-        model_name=GEN_MODEL_NAME,
-        system_instruction=SYSTEM_PROMPT,
-    )
+    return genai.Client(api_key=GOOGLE_API_KEY)
 
 
 def retrieve(collection, query: str, k: int = 2) -> list[str]:
@@ -114,7 +111,7 @@ def build_fallback_answer(context_chunks: list[str]) -> str:
 def answer_question(
     question: str,
     collection,
-    client: genai.GenerativeModel,
+    client: genai.Client,
     k: int = 2,
     max_tokens: int = 200,
 ) -> str:
@@ -132,14 +129,16 @@ def answer_question(
     )
 
     try:
-        response = client.generate_content(
-            prompt,
-            generation_config=genai.types.GenerationConfig(
+        response = client.models.generate_content(
+            model=GEN_MODEL_NAME,
+            contents=prompt,
+            config=genai_types.GenerateContentConfig(
+                system_instruction=SYSTEM_PROMPT,
                 max_output_tokens=max_tokens,
             ),
         )
         return response.text
-    except (GoogleAPIError, TimeoutError, Exception) as exc:
+    except (APIError, TimeoutError, Exception) as exc:
         # Broad catch is intentional here: the Gemini client can raise
         # several different exception types (API errors, timeouts,
         # connection errors) depending on the failure mode, and all of them
