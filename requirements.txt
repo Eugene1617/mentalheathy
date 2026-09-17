@@ -4,3 +4,4 @@ chromadb
 google-genai
 pydantic
 pymupdf
+slowapi
