@@ -2,15 +2,7 @@
 MindPower RAG core — deployment-light version.
 
 Retrieval: Chroma with its default ONNX embedding function (no torch).
-Generation: Hugging Face Inference API via huggingface_hub (HTTP call,
-no local model weights, no torch/transformers installed).
-"""
-
-"""
-MindPower RAG core — deployment-light version.
-
-Retrieval: Chroma with its default ONNX embedding function (no torch).
-Generation: Hugging Face Inference API via huggingface_hub (HTTP call,
+Generation: Google Gemini via google-generativeai (HTTP call,
 no local model weights, no torch/transformers installed).
 
 If the generation call fails (model unavailable, rate-limited, timed
@@ -24,17 +16,19 @@ import os
 
 import chromadb
 from chromadb.utils import embedding_functions
-from huggingface_hub import InferenceClient
-from huggingface_hub.utils import HfHubHTTPError
+import google.generativeai as genai
+from google.api_core.exceptions import GoogleAPIError
 
 logger = logging.getLogger("mindpower.rag")
 
 CHROMA_DIR = "chromadb"
 COLLECTION_NAME = "mentalhealth"
 
-# Override with an env var if you switch to a different hosted model.
-GEN_MODEL_NAME = os.environ.get("MINDPOWER_GEN_MODEL", "Qwen/Qwen2.5-0.5B-Instruct")
-HF_TOKEN = os.environ.get("HF_TOKEN")
+# Override with an env var if you switch to a different Gemini model.
+# Note: there is no "Gemini 3.5" model — the line runs 1.0 / 1.5 / 2.0 / 2.5.
+# gemini-2.5-flash is a solid default: fast and inexpensive for grounded Q&A.
+GEN_MODEL_NAME = os.environ.get("MINDPOWER_GEN_MODEL", "gemini-2.5-flash")
+GOOGLE_API_KEY = os.environ.get("GOOGLE_API_KEY")
 
 SYSTEM_PROMPT = """You are a mental health support assistant.
 Answer using the provided knowledge only.
@@ -77,14 +71,18 @@ def get_collection():
     return collection
 
 
-def get_generator_client() -> InferenceClient:
-    if not HF_TOKEN:
+def get_generator_client() -> genai.GenerativeModel:
+    if not GOOGLE_API_KEY:
         raise RuntimeError(
-            "HF_TOKEN environment variable is not set. Create a token at "
-            "https://huggingface.co/settings/tokens and set it in your "
+            "GOOGLE_API_KEY environment variable is not set. Create a key at "
+            "https://aistudio.google.com/app/apikey and set it in your "
             "Render environment variables."
         )
-    return InferenceClient(model=GEN_MODEL_NAME, token=HF_TOKEN)
+    genai.configure(api_key=GOOGLE_API_KEY)
+    return genai.GenerativeModel(
+        model_name=GEN_MODEL_NAME,
+        system_instruction=SYSTEM_PROMPT,
+    )
 
 
 def retrieve(collection, query: str, k: int = 2) -> list[str]:
@@ -107,16 +105,16 @@ def build_fallback_answer(context_chunks: list[str]) -> str:
         excerpt = excerpt[:700].rsplit(" ", 1)[0] + "…"
 
     return (
-    
-    f"\"{excerpt}\"\n\n"
-   
-)
+        f"\"{excerpt}\"\n\n"
+        "(This is a direct excerpt from the knowledge base — generation was "
+        "unavailable, so no conversational answer could be composed.)"
+    )
 
 
 def answer_question(
     question: str,
     collection,
-    client: InferenceClient,
+    client: genai.GenerativeModel,
     k: int = 2,
     max_tokens: int = 200,
 ) -> str:
@@ -127,25 +125,24 @@ def answer_question(
 
     context = "\n\n".join(context_chunks)
 
-    messages = [
-        {"role": "system", "content": SYSTEM_PROMPT},
-        {
-            "role": "user",
-            "content": (
-                f"Knowledge:\n\n{context}\n\n"
-                f"Question:\n{question}\n\n"
-                "Give a clear, supportive answer based on the knowledge above."
-            ),
-        },
-    ]
+    prompt = (
+        f"Knowledge:\n\n{context}\n\n"
+        f"Question:\n{question}\n\n"
+        "Give a clear, supportive answer based on the knowledge above."
+    )
 
     try:
-        response = client.chat_completion(messages=messages, max_tokens=max_tokens)
-        return response.choices[0].message.content
-    except (HfHubHTTPError, TimeoutError, Exception) as exc:
-        # Broad catch is intentional here: the HF client can raise several
-        # different exception types (HTTP errors, timeouts, connection
-        # errors) depending on the failure mode, and all of them should
-        # degrade to the same RAG-grounded fallback rather than a 500.
+        response = client.generate_content(
+            prompt,
+            generation_config=genai.types.GenerationConfig(
+                max_output_tokens=max_tokens,
+            ),
+        )
+        return response.text
+    except (GoogleAPIError, TimeoutError, Exception) as exc:
+        # Broad catch is intentional here: the Gemini client can raise
+        # several different exception types (API errors, timeouts,
+        # connection errors) depending on the failure mode, and all of them
+        # should degrade to the same RAG-grounded fallback rather than a 500.
         logger.warning("Generation call failed, falling back to retrieval: %s", exc)
         return build_fallback_answer(context_chunks)
