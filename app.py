@@ -41,16 +41,16 @@ async def lifespan(app: FastAPI):
     state.clear()
 
 
-app = FastAPI(title="MindPower API", lifespan=lifespan)
+app = FastAPI(title="MindPower API", lifespan=lifespan, docs_url=None,redoc_url=None,openapi_url=None)
 
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["https://mentalheathy.onrender.com",'https://ourmind.netlify.app'],
     allow_methods=["POST", "GET"],
-    allow_headers=["https://mentalheathy.onrender.com"],
+    allow_headers=["*"],
 )
 
 
